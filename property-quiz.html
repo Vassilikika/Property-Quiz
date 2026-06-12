@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Your Dream Home · Skouras Real Estate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: linear-gradient(145deg, #fef2f2 0%, #fff8f4 60%, #fef9f0 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* ── Shell ── */
+    .quiz-wrap {
+      width: 100%;
+      max-width: 560px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px rgba(208,24,24,0.1), 0 2px 12px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .quiz-header {
+      background: #fff;
+      border-bottom: 3px solid #D01818;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-wrap img { height: 40px; display: block; }
+    .logo-fallback { font-size: 15px; font-weight: 800; color: #1a1a1a; display: none; }
+    .logo-fallback span { color: #D01818; }
+
+    /* ── Step dots ── */
+    .step-dots { display: flex; gap: 7px; align-items: center; }
+    .step-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      border: 2px solid #e0e0e0;
+      transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .step-dot.done    { background: #ffcccc; border-color: #D01818; }
+    .step-dot.active  { background: #D01818; border-color: #D01818; transform: scale(1.35); }
+
+    /* ── Screens ── */
+    .screen { display: none; padding: 36px 28px 28px; animation: slideIn 0.35s cubic-bezier(.22,.68,0,1.2); }
+    .screen.active { display: block; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px) scale(0.97); }
+      to   { opacity: 1; transform: translateX(0)   scale(1); }
+    }
+
+    .q-label {
+      font-size: 11px; font-weight: 700; color: #D01818;
+      text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 8px;
+    }
+    h2 { font-size: 21px; color: #1a1a1a; font-weight: 700; line-height: 1.35; margin-bottom: 4px; }
+    .sub { font-size: 13px; color: #aaa; margin-bottom: 20px; }
+
+    /* ── Options ── */
+    .options { display: grid; gap: 10px; }
+
+    .option {
+      border: 2px solid #f0f0f0;
+      border-radius: 16px;
+      padding: 13px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+      background: #fff;
+      user-select: none;
+    }
+    .option:hover {
+      border-color: #D01818;
+      background: #fff8f8;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(208,24,24,0.12);
+    }
+    .option.selected {
+      border-color: #D01818;
+      background: #D01818;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(208,24,24,0.3);
+    }
+
+    /* Icon chip */
+    .opt-chip {
+      width: 48px; height: 48px; flex-shrink: 0;
+      background: #fff5f5;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      transition: background 0.2s;
+    }
+    .option.selected .opt-chip { background: rgba(255,255,255,0.2); }
+
+    .opt-body { flex: 1; }
+    .opt-title { font-weight: 700; font-size: 14px; color: #1a1a1a; line-height: 1.3; }
+    .opt-desc  { font-size: 12px; color: #bbb; margin-top: 2px; }
+    .option.selected .opt-title { color: #fff; }
+    .option.selected .opt-desc  { color: rgba(255,255,255,0.65); }
+
+    /* ── Intro ── */
+    .intro-body { text-align: center; padding: 12px 0 8px; }
+
+    .intro-logo-wrap {
+      display: inline-block;
+      margin-bottom: 24px;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #fff5f5, #fff0ee);
+      border-radius: 24px;
+      box-shadow: 0 4px 24px rgba(208,24,24,0.1);
+      animation: float 3.5s ease-in-out infinite;
+    }
+    .intro-logo-wrap img { height: 52px; display: block; }
+    .intro-logo-wrap .logo-fallback-intro {
+      display: none;
+      font-size: 20px; font-weight: 800; color: #1a1a1a;
+    }
+    .intro-logo-wrap .logo-fallback-intro span { color: #D01818; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .intro-body h1 { font-size: 25px; font-weight: 800; color: #1a1a1a; margin-bottom: 10px; }
+    .intro-body p  { font-size: 14px; color: #888; line-height: 1.7; max-width: 360px; margin: 0 auto 28px; }
+
+    .btn-start {
+      background: #D01818;
+      color: #fff;
+      border: none;
+      padding: 15px 44px;
+      font-family: 'Poppins', Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      border-radius: 50px;
+      transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 4px 16px rgba(208,24,24,0.35);
+    }
+    .btn-start:hover {
+      background: #b51515;
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 24px rgba(208,24,24,0.4);
+    }
+
+    /* ── Results ── */
+    .results-top { text-align: center; margin-bottom: 20px; position: relative; }
+
+    /* confetti dots */
+    .confetti {
+      position: relative;
+      height: 40px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .confetti span {
+      position: absolute;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      animation: confettiFall 0.9s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0%   { opacity: 1; transform: translateY(-10px) scale(0); }
+      60%  { opacity: 1; transform: translateY(20px) scale(1); }
+      100% { opacity: 0; transform: translateY(40px) scale(0.8); }
+    }
+
+    .result-tag {
+      display: inline-block;
+      background: #D01818;
+      color: #fff;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      padding: 5px 14px;
+      border-radius: 50px;
+      margin-bottom: 10px;
+      animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .results-top h2 { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .results-top p  { font-size: 13px; color: #bbb; }
+
+    /* ── Filter pills ── */
+    .filter-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 22px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff5f5;
+      border: 1.5px solid #ffd5d5;
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 12px; font-weight: 600; color: #c01010;
+      animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    /* ── Search CTA ── */
+    .search-cta {
+      display: block;
+      background: #D01818;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      padding: 18px 20px;
+      font-family: 'Poppins', Arial, sans-serif;
+      font-size: 15px; font-weight: 700;
+      border-radius: 16px;
+      transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+      margin-bottom: 14px;
+      box-shadow: 0 4px 16px rgba(208,24,24,0.3);
+    }
+    .search-cta:hover {
+      background: #b51515;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(208,24,24,0.4);
+    }
+    .search-cta small {
+      display: block; font-size: 11px; font-weight: 400;
+      opacity: 0.75; margin-top: 3px;
+    }
+
+    /* ── Restart ── */
+    .btn-restart {
+      width: 100%; background: none;
+      border: 2px solid #f0f0f0;
+      padding: 12px;
+      font-family: 'Poppins', Arial, sans-serif;
+      font-size: 13px; color: #ccc;
+      cursor: pointer; border-radius: 12px;
+      transition: all 0.2s;
+    }
+    .btn-restart:hover { border-color: #D01818; color: #D01818; }
+
+    /* ── Footer ── */
+    .quiz-footer {
+      border-top: 1px solid #f5f5f5;
+      padding: 12px 28px;
+      text-align: center;
+      font-size: 11px; color: #ccc;
+    }
+    .quiz-footer a { color: #D01818; font-weight: 600; text-decoration: none; }
+
+    @media (max-width: 500px) {
+      .screen { padding: 26px 18px 22px; }
+      .quiz-header { padding: 12px 18px; }
+      h2 { font-size: 18px; }
+      .intro-body h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-wrap">
+
+  <!-- Header -->
+  <div class="quiz-header">
+    <div class="logo-wrap">
+      <img src="https://www.skourasrealestate.gr/templates/arq/images/logo.svg"
+           alt="Skouras Real Estate"
+           onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block'">
+      <div class="logo-fallback">SKOURAS <span>RE</span></div>
+    </div>
+    <div class="step-dots" id="stepDots">
+      <div class="step-dot" id="sd1"></div>
+      <div class="step-dot" id="sd2"></div>
+      <div class="step-dot" id="sd3"></div>
+      <div class="step-dot" id="sd4"></div>
+      <div class="step-dot" id="sd5"></div>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div class="screen active" id="s-intro">
+    <div class="intro-body">
+      <div class="intro-logo-wrap">
+        <img src="https://www.skourasrealestate.gr/templates/arq/images/logo.svg"
+             alt="Skouras Real Estate"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+        <div class="logo-fallback-intro">SKOURAS <span>RE</span></div>
+      </div>
+      <h1>Find Your Dream Home</h1>
+      <p>Answer 5 quick questions and we'll match you with properties you'll love. Takes under a minute!</p>
+      <button class="btn-start" onclick="go('q1'); setDots(1)">Let's Go &nbsp;→</button>
+    </div>
+  </div>
+
+  <!-- Q1: Type -->
+  <div class="screen" id="s-q1">
+    <div class="q-label">Question 1 of 5</div>
+    <h2>What are you looking for?</h2>
+    <p class="sub">Pick the type of property you have in mind</p>
+    <div class="options">
+      <div class="option" onclick="pick('type','apartment',this,'q2',2)">
+        <div class="opt-chip">🏢</div>
+        <div><div class="opt-title">Apartment</div><div class="opt-desc">Modern living, low maintenance, great location</div></div>
+      </div>
+      <div class="option" onclick="pick('type','house',this,'q2',2)">
+        <div class="opt-chip">🏡</div>
+        <div><div class="opt-title">House / Villa</div><div class="opt-desc">Space, privacy, your own walls</div></div>
+      </div>
+      <div class="option" onclick="pick('type','any',this,'q2',2)">
+        <div class="opt-chip">🏘️</div>
+        <div><div class="opt-title">Either works for me</div><div class="opt-desc">Apartment or house — I'm open to both</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2: Budget -->
+  <div class="screen" id="s-q2">
+    <div class="q-label">Question 2 of 5</div>
+    <h2>What's your budget?</h2>
+    <p class="sub">Be honest — we have something for everyone 😉</p>
+    <div class="options">
+      <div class="option" onclick="pick('budget','low',this,'q3',3)">
+        <div class="opt-chip">💰</div>
+        <div><div class="opt-title">Up to €150,000</div><div class="opt-desc">Smart investment, great starting point</div></div>
+      </div>
+      <div class="option" onclick="pick('budget','mid',this,'q3',3)">
+        <div class="opt-chip">💵</div>
+        <div><div class="opt-title">€150,000 – €350,000</div><div class="opt-desc">Plenty of excellent options here</div></div>
+      </div>
+      <div class="option" onclick="pick('budget','high',this,'q3',3)">
+        <div class="opt-chip">💎</div>
+        <div><div class="opt-title">€350,000 – €600,000</div><div class="opt-desc">Premium picks, exceptional value</div></div>
+      </div>
+      <div class="option" onclick="pick('budget','premium',this,'q3',3)">
+        <div class="opt-chip">👑</div>
+        <div><div class="opt-title">€600,000+</div><div class="opt-desc">The finest properties in our portfolio</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3: Morning -->
+  <div class="screen" id="s-q3">
+    <div class="q-label">Question 3 of 5</div>
+    <h2>Your ideal morning at home ☀️</h2>
+    <p class="sub">Close your eyes and picture it...</p>
+    <div class="options">
+      <div class="option" onclick="pick('morning','sea',this,'q4',4)">
+        <div class="opt-chip">🌊</div>
+        <div><div class="opt-title">Coffee on the balcony with sea breeze</div><div class="opt-desc">Open horizon, salt air, total peace</div></div>
+      </div>
+      <div class="option" onclick="pick('morning','garden',this,'q4',4)">
+        <div class="opt-chip">🌸</div>
+        <div><div class="opt-title">Breakfast in the garden</div><div class="opt-desc">Birds singing, bare feet on grass, fresh air</div></div>
+      </div>
+      <div class="option" onclick="pick('morning','city',this,'q4',4)">
+        <div class="opt-chip">☕</div>
+        <div><div class="opt-title">Grabbing a coffee downstairs</div><div class="opt-desc">Cafés, shops, energy — everything at your door</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4: Weekend -->
+  <div class="screen" id="s-q4">
+    <div class="q-label">Question 4 of 5</div>
+    <h2>Your ideal weekend at home 🛋️</h2>
+    <p class="sub">No wrong answers here!</p>
+    <div class="options">
+      <div class="option" onclick="pick('weekend','social',this,'q5',5)">
+        <div class="opt-chip">🥂</div>
+        <div><div class="opt-title">Hosting friends & family</div><div class="opt-desc">Big table, full house, good vibes all day</div></div>
+      </div>
+      <div class="option" onclick="pick('weekend','cozy',this,'q5',5)">
+        <div class="opt-chip">📺</div>
+        <div><div class="opt-title">Cozy day in</div><div class="opt-desc">Blanket, favourite series, zero obligations</div></div>
+      </div>
+      <div class="option" onclick="pick('weekend','outdoor',this,'q5',5)">
+        <div class="opt-chip">🌳</div>
+        <div><div class="opt-title">Outside all day</div><div class="opt-desc">Garden, BBQ, kids and pets running wild</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5: Vibe -->
+  <div class="screen" id="s-q5">
+    <div class="q-label">Question 5 of 5</div>
+    <h2>Pick your vibe ✨</h2>
+    <p class="sub">Which feels most like you?</p>
+    <div class="options">
+      <div class="option" onclick="pick('vibe','modern',this,'results',6)">
+        <div class="opt-chip">🪟</div>
+        <div><div class="opt-title">Modern & Sleek</div><div class="opt-desc">Clean lines, open plan, everything brand new</div></div>
+      </div>
+      <div class="option" onclick="pick('vibe','traditional',this,'results',6)">
+        <div class="opt-chip">🏺</div>
+        <div><div class="opt-title">Traditional & Charming</div><div class="opt-desc">Stone walls, character, history in every corner</div></div>
+      </div>
+      <div class="option" onclick="pick('vibe','nature',this,'results',6)">
+        <div class="opt-chip">🌲</div>
+        <div><div class="opt-title">Nature Retreat</div><div class="opt-desc">Surrounded by green, far from the noise</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="screen" id="s-results">
+    <div class="results-top" id="rTop"></div>
+    <div class="filter-pills" id="rPills"></div>
+    <a class="search-cta" id="rCTA" href="#" target="_blank">
+      See All Matching Properties →
+      <small>Opens on skourasrealestate.gr with your filters applied</small>
+    </a>
+    <button class="btn-restart" onclick="restart()">↺ &nbsp;Start Over</button>
+  </div>
+
+  <div class="quiz-footer">
+    <a href="https://www.skourasrealestate.gr" target="_blank">skourasrealestate.gr</a>
+    &nbsp;·&nbsp; Ναύπλιο · Καλαμάτα · Πόρτο Χέλι · Κόρινθος · Γιάλοβα · Πάτρα
+  </div>
+
+</div>
+
+<script>
+/*
+  URL BUILDER — all parameters verified against live site:
+  Q1 type   → src_multi_cat[] / src_cat     (category)
+  Q2 budget → minvalue / maxvalue           (price range)
+  Q3 morning → sea=1                        (coastal, when "sea")
+  Q4 weekend → bedrooms=N                   (1 cozy, 3 social)
+  Q5 vibe   → new_construction=c_1          (new builds, "modern")
+               sea=1                        (coastal, "nature" + not already sea)
+*/
+const BASE = 'https://www.skourasrealestate.gr/index.php?option=com_estateagent&view=dosearch&ns=1&Itemid=105&type=1&lang=el';
+
+const CAT = {
+  apartment: '&src_multi_cat%5B0%5D=48&src_multi_cat%5B1%5D=49&src_multi_cat%5B2%5D=50',
+  house:     '&src_multi_cat%5B0%5D=9&src_multi_cat%5B1%5D=17',
+  any:       '&src_cat=1'
+};
+
+const PRICE = {
+  low:     '&maxvalue=150000',
+  mid:     '&minvalue=150000&maxvalue=350000',
+  high:    '&minvalue=350000&maxvalue=600000',
+  premium: '&minvalue=600000'
+};
+
+function buildURL(a) {
+  let url = BASE;
+  url += CAT[a.type]     || '';
+  url += PRICE[a.budget] || '';
+  if (a.morning === 'sea')                          url += '&sea=1';
+  if (a.weekend === 'social')                       url += '&bedrooms=3';
+  if (a.weekend === 'cozy')                         url += '&bedrooms=1';
+  if (a.vibe === 'modern')                          url += '&new_construction=c_1';
+  if (a.vibe === 'nature' && a.morning !== 'sea')   url += '&sea=1';
+  return url;
+}
+
+/* ── State & navigation ── */
+const answers = {};
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+}
+
+function setDots(active) {
+  for (let i = 1; i <= 5; i++) {
+    const d = document.getElementById('sd' + i);
+    d.className = 'step-dot' + (i < active ? ' done' : i === active ? ' active' : '');
+  }
+}
+
+function pick(key, val, el, next, step) {
+  el.parentElement.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[key] = val;
+  setDots(step);
+  setTimeout(() => next === 'results' ? showResults() : go(next), 260);
+}
+
+/* ── Results ── */
+const TYPE_LABEL   = { apartment: 'Apartment', house: 'House / Villa', any: 'Apartment or House' };
+const BUDGET_LABEL = { low: 'Up to €150,000', mid: '€150,000 – €350,000', high: '€350,000 – €600,000', premium: '€600,000+' };
+
+const PILLS = {
+  sea:         ['🌊', 'Sea view / coastal'],
+  garden:      ['🌸', 'Garden setting'],
+  city:        ['☕', 'City centre'],
+  social:      ['🥂', 'Min. 3 bedrooms'],
+  cozy:        ['📺', '1 bedroom'],
+  outdoor:     ['🌳', 'Outdoor space'],
+  modern:      ['🪟', 'New construction'],
+  traditional: ['🏺', 'Traditional style'],
+  nature:      ['🌲', 'Near nature / sea'],
+};
+
+const CONFETTI_COLORS = ['#D01818','#ff6b6b','#ffd166','#06d6a0','#118ab2','#e9c46a'];
+
+function showResults() {
+  const a = answers;
+  document.getElementById('rCTA').href = buildURL(a);
+
+  // Confetti burst
+  const dots = Array.from({length: 10}, (_, i) => {
+    const color = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+    const left  = 10 + i * 8;
+    const delay = (i * 0.07).toFixed(2);
+    return `<span style="left:${left}%;background:${color};animation-delay:${delay}s"></span>`;
+  }).join('');
+
+  document.getElementById('rTop').innerHTML = `
+    <div class="confetti">${dots}</div>
+    <div class="result-tag">🎯 &nbsp;Your Match</div>
+    <h2>${TYPE_LABEL[a.type] || 'Property'} &nbsp;·&nbsp; ${BUDGET_LABEL[a.budget] || ''}</h2>
+    <p>Your filters are applied — tap below to see the results</p>
+  `;
+
+  const pillKeys = [a.morning, a.weekend, a.vibe].filter(Boolean);
+  document.getElementById('rPills').innerHTML = pillKeys.map((k, i) => {
+    const [icon, label] = PILLS[k] || ['', k];
+    return `<div class="pill" style="animation-delay:${i * 0.1}s"><span>${icon}</span>${label}</div>`;
+  }).join('');
+
+  go('results');
+  setDots(6);
+  for (let i = 1; i <= 5; i++) document.getElementById('sd' + i).classList.add('done');
+}
+
+function restart() {
+  Object.keys(answers).forEach(k => delete answers[k]);
+  go('intro');
+  setDots(0);
+}
+</script>
+
+</body>
+</html>
